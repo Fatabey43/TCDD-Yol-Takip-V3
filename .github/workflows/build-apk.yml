@@ -42,9 +42,8 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Fix Kotlin Version Conflict
+      - name: Fix Kotlin and Dependency Conflicts
         run: |
-          # Kotlin kütüphane çakışmasını önlemek için gradle yapılandırmasına resolutionStrategy ekliyoruz
           BUILD_GRADLE="android/app/build.gradle"
           if [ -f "$BUILD_GRADLE" ]; then
             echo "" >> "$BUILD_GRADLE"
