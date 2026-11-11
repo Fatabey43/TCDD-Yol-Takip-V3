@@ -42,15 +42,24 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Fix Kotlin and Dependency Conflicts
+      - name: Apply Global Kotlin Force Strategy
         run: |
           BUILD_GRADLE="android/app/build.gradle"
           if [ -f "$BUILD_GRADLE" ]; then
             echo "" >> "$BUILD_GRADLE"
-            echo "configurations.all {" >> "$BUILD_GRADLE"
-            echo "    resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'"
-            echo "    resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'"
-            echo "    resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'"
+            echo "subprojects {" >> "$BUILD_GRADLE"
+            echo "    configurations.all {" >> "$BUILD_GRADLE"
+            echo "        resolutionStrategy {" >> "$BUILD_GRADLE"
+            echo "            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'"
+            echo "            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'"
+            echo "            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'"
+            echo "            eachDependency { details ->"
+            echo "                if (details.requested.group == 'org.jetbrains.kotlin') {"
+            echo "                    details.useVersion '1.8.22'"
+            echo "                }"
+            echo "            }"
+            echo "        }"
+            echo "    }"
             echo "}" >> "$BUILD_GRADLE"
           fi
 
