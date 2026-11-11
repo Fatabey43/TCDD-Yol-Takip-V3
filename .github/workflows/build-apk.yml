@@ -25,14 +25,15 @@ jobs:
       - name: Build Web App
         run: npm run build
 
-      - name: Initialize Capacitor Config & Add Android
+      - name: Auto Init Capacitor & Add Android
         run: |
-          # Eğer config dosyalarından hiçbiri yoksa otomatik oluştur, varsa dokunma
+          # Eğer projede capacitor config yoksa otomatik oluştur
           if [ ! -f "capacitor.config.json" ] && [ ! -f "capacitor.config.ts" ]; then
-            npx cap init "TCDD Yol Takip" "com.tcdd.yoltakip" --web-dir dist || true
+            npx cap init "TCDD Yol Takip" "com.tcdd.yoltakip" --web-dir dist
           fi
           
-          npx cap add android || true
+          # Android platformunu ekle ve senkronize et
+          npx cap add android
           npx cap sync android
 
       - name: Setup Java JDK
