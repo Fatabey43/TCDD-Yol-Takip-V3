@@ -25,21 +25,13 @@ jobs:
       - name: Build Web App
         run: npm run build
 
-      - name: Check Capacitor Config & Add Android
+      - name: Initialize Capacitor Config & Add Android
         run: |
-          # Eğer config dosyasında appId yoksa otomatik ekle
-          node -e '
-            const fs = require("fs");
-            let file = "capacitor.config.json";
-            if (fs.existsSync(file)) {
-              let config = JSON.parse(fs.readFileSync(file, "utf8"));
-              if (!config.appId) {
-                config.appId = "com.tcdd.yoltakip";
-                fs.writeFileSync(file, JSON.stringify(config, null, 2));
-                console.log("appId otomatik eklendi!");
-              }
-            }
-          '
+          # Eğer config dosyalarından hiçbiri yoksa otomatik oluştur, varsa dokunma
+          if [ ! -f "capacitor.config.json" ] && [ ! -f "capacitor.config.ts" ]; then
+            npx cap init "TCDD Yol Takip" "com.tcdd.yoltakip" --web-dir dist || true
+          fi
+          
           npx cap add android || true
           npx cap sync android
 
