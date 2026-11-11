@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies & Capacitor CLI
+      - name: Install Dependencies
         run: |
           npm install
           npm install --save-dev @capacitor/cli @capacitor/android
@@ -25,9 +25,22 @@ jobs:
       - name: Build Web App
         run: npm run build
 
-      - name: Add Android Platform & Sync
+      - name: Check Capacitor Config & Add Android
         run: |
-          npx --no-install cap add android || true
+          # Eğer config dosyasında appId yoksa otomatik ekle
+          node -e '
+            const fs = require("fs");
+            let file = "capacitor.config.json";
+            if (fs.existsSync(file)) {
+              let config = JSON.parse(fs.readFileSync(file, "utf8"));
+              if (!config.appId) {
+                config.appId = "com.tcdd.yoltakip";
+                fs.writeFileSync(file, JSON.stringify(config, null, 2));
+                console.log("appId otomatik eklendi!");
+              }
+            }
+          '
+          npx cap add android || true
           npx cap sync android
 
       - name: Setup Java JDK
