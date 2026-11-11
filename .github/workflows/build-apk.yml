@@ -17,23 +17,24 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Dependencies & Capacitor CLI
+        run: |
+          npm install
+          npm install --save-dev @capacitor/cli @capacitor/android
 
       - name: Build Web App
         run: npm run build
+
+      - name: Add Android Platform & Sync
+        run: |
+          npx --no-install cap add android || true
+          npx cap sync android
 
       - name: Setup Java JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
-
-      - name: Add Android Platform & Sync
-        run: |
-          npm install @capacitor/android
-          npx cap add android || true
-          npx cap sync
 
       - name: Build Android APK with Gradle Action
         uses: gradle/gradle-build-action@v3
