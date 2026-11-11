@@ -17,20 +17,19 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies
+      - name: Install Dependencies & Capacitor Core
         run: |
           npm install
-          npm install --save-dev @capacitor/cli @capacitor/android
+          npm install @capacitor/core @capacitor/android
+          npm install --save-dev @capacitor/cli
 
       - name: Build Web App
         run: npm run build
 
       - name: Create JSON Config & Add Android
         run: |
-          # TypeScript dosyası varsa temizle ki çakışma yapmasın
           rm -f capacitor.config.ts
 
-          # Saf ve hatasız JSON konfigürasyonunu doğrudan oluşturuyoruz
           cat << 'EOF' > capacitor.config.json
           {
             "appId": "com.tcdd.yoltakip",
@@ -40,7 +39,6 @@ jobs:
           }
           EOF
 
-          # Android platformunu ekle ve senkronize et
           npx cap add android
           npx cap sync android
 
